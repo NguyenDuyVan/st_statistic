@@ -30,7 +30,7 @@ const fmt = (n, dec = 0) =>
       }).format(n)
     : "-";
 
-const fmtPrice = (n) => (n ? `${fmt(n, 1)} (×1000đ)` : "-");
+const fmtPrice = (n) => (n ? `${fmt(n, 1)}` : "-");
 
 const fmtBillion = (n) => (n ? `${fmt(n / 1_000_000_000, 2)} tỷ ₫` : "-");
 
@@ -44,6 +44,14 @@ const stats = computed(() => {
   const totalVol = d.reduce((s, x) => s + (x.totalVolume || 0), 0);
   const totalVal = d.reduce((s, x) => s + (x.totalValue || 0), 0);
   const avgClose = closes.reduce((a, b) => a + b, 0) / closes.length;
+
+  // VWAP = Σ(priceAverage × totalVolume) / Σ(totalVolume)
+  const vwapNumer = d.reduce(
+    (s, x) => s + (x.priceAverage || 0) * (x.totalVolume || 0),
+    0,
+  );
+  const vwapDenom = d.reduce((s, x) => s + (x.totalVolume || 0), 0);
+  const vwap = vwapDenom > 0 ? vwapNumer / vwapDenom : null;
   const maxHigh = Math.max(...highs);
   const minLow = Math.min(...lows);
   const lastClose = d[d.length - 1]?.priceClose;
@@ -74,6 +82,14 @@ const stats = computed(() => {
       icon: "pi pi-chart-line",
       color: "#2563eb",
       bgColor: "#dbeafe",
+    },
+    {
+      label: "VWAP (TB theo khối lượng)",
+      value: fmtPrice(vwap),
+      sub: `= Σ(Giá TB × KL) ÷ Tổng KL`,
+      icon: "pi pi-calculator",
+      color: "#0f766e",
+      bgColor: "#ccfbf1",
     },
     {
       label: "Biên độ giá (High - Low)",
@@ -116,8 +132,20 @@ const stats = computed(() => {
 <style scoped>
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .stat-card {

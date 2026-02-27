@@ -101,6 +101,7 @@ const fmt = (n, dec = 0) =>
 
 const fmtNum = (n) => fmt(n, 0);
 const fmtBillion = (n) => (n ? `${fmt(n / 1_000_000_000, 2)} tỷ` : "-");
+const fmtPrice = (n) => (n ? `${fmt(n, 0)} ₫` : "-");
 
 const labels = computed(() =>
   props.data.map((d) => {
@@ -123,6 +124,12 @@ const totalSellVal = computed(() =>
   props.data.reduce((s, d) => s + (d.sellForeignValue || 0), 0),
 );
 const netForeign = computed(() => totalBuy.value - totalSell.value);
+const avgBuyPrice = computed(() =>
+  totalBuy.value > 0 ? totalBuyVal.value / totalBuy.value : 0,
+);
+const avgSellPrice = computed(() =>
+  totalSell.value > 0 ? totalSellVal.value / totalSell.value : 0,
+);
 const lastRoom = computed(
   () => props.data[props.data.length - 1]?.currentForeignRoom ?? 0,
 );
@@ -187,7 +194,7 @@ const foreignStats = computed(() => {
       sub: isNetBuy
         ? "▲ Khối ngoại đang mua ròng"
         : "▼ Khối ngoại đang bán ròng",
-      icon: isNetBuy ? "pi pi-trending-up" : "pi pi-trending-down",
+      icon: isNetBuy ? "pi pi-arrow-up" : "pi pi-arrow-down",
       color: isNetBuy ? "#16a34a" : "#dc2626",
       bgColor: isNetBuy ? "#dcfce7" : "#fee2e2",
     },
@@ -198,6 +205,22 @@ const foreignStats = computed(() => {
       icon: "pi pi-globe",
       color: "#7c3aed",
       bgColor: "#ede9fe",
+    },
+    {
+      label: "Giá TB Mua (Khối ngoại)",
+      value: fmtPrice(avgBuyPrice.value),
+      sub: `Tổng giá trị: ${fmtBillion(totalBuyVal.value)}`,
+      icon: "pi pi-tag",
+      color: "#16a34a",
+      bgColor: "#dcfce7",
+    },
+    {
+      label: "Giá TB Bán (Khối ngoại)",
+      value: fmtPrice(avgSellPrice.value),
+      sub: `Tổng giá trị: ${fmtBillion(totalSellVal.value)}`,
+      icon: "pi pi-tag",
+      color: "#dc2626",
+      bgColor: "#fee2e2",
     },
     {
       label: "Phiên mua nhiều nhất",
@@ -436,9 +459,21 @@ const roomOptions = computed(() => ({
 /* Stats grid */
 .foreign-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.875rem;
   padding: 1.25rem 1.5rem 0;
+}
+
+@media (max-width: 1024px) {
+  .foreign-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .foreign-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .fstat-card {

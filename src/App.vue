@@ -19,7 +19,9 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <SearchForm @search="handleSearch" :loading="loading" />
+      <div class="search-sticky">
+        <SearchForm @search="handleSearch" :loading="loading" />
+      </div>
 
       <Message
         v-if="error"
@@ -55,6 +57,7 @@
         <StatsOverview :data="stockData" />
         <PriceVolumeChart :data="stockData" :symbol="currentSymbol" />
         <ForeignSection :data="stockData" :symbol="currentSymbol" />
+        <PropForeignComparison :data="stockData" :symbol="currentSymbol" />
         <StockDataTable :data="stockData" />
       </template>
 
@@ -84,6 +87,7 @@ import SearchForm from "./components/SearchForm.vue";
 import StatsOverview from "./components/StatsOverview.vue";
 import PriceVolumeChart from "./components/PriceVolumeChart.vue";
 import ForeignSection from "./components/ForeignSection.vue";
+import PropForeignComparison from "./components/PropForeignComparison.vue";
 import StockDataTable from "./components/StockDataTable.vue";
 import { fetchHistoricalQuotes } from "./services/stockApi.js";
 
@@ -174,6 +178,14 @@ const formatDate = (dateStr) => {
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+.search-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin: -1.5rem -1.5rem 1.5rem;
+  padding: 0.875rem 1.5rem;
 }
 
 .symbol-header {
