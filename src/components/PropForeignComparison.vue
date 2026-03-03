@@ -295,7 +295,7 @@ const foreignPct = computed(() =>
 const labels = computed(() =>
   props.data.map((d) => {
     const dt = new Date(d.date);
-    return `${String(dt.getDate()).padStart(2, "0")}/${String(dt.getMonth() + 1).padStart(2, "0")}`;
+    return `${String(dt.getDate()).padStart(2, "0")}/${String(dt.getMonth() + 1).padStart(2, "0")}/${dt.getFullYear()}`;
   }),
 );
 

@@ -106,7 +106,7 @@ const fmtPrice = (n) => (n ? `${fmt(n, 0)} ₫` : "-");
 const labels = computed(() =>
   props.data.map((d) => {
     const dt = new Date(d.date);
-    return `${String(dt.getDate()).padStart(2, "0")}/${String(dt.getMonth() + 1).padStart(2, "0")}`;
+    return `${String(dt.getDate()).padStart(2, "0")}/${String(dt.getMonth() + 1).padStart(2, "0")}/${dt.getFullYear()}`;
   }),
 );
 
@@ -319,7 +319,9 @@ const buySellOptions = computed(() => ({
     tooltip: {
       callbacks: {
         label: (ctx) => {
-          const v = Math.abs(ctx.raw);
+          // Buy/Sell bars are stored as negative for sell — show absolute value
+          // Cumulative net line should keep its sign
+          const v = ctx.dataset.type === "bar" ? Math.abs(ctx.raw) : ctx.raw;
           return ` ${ctx.dataset.label}: ${new Intl.NumberFormat("vi-VN").format(v)} CP`;
         },
       },
@@ -366,6 +368,19 @@ const roomChartData = computed(() => ({
       borderDash: [5, 3],
       order: 2,
     },
+    {
+      label: "Giá đóng cửa",
+      data: props.data.map((d) => d.priceClose || null),
+      borderColor: "#0ea5e9",
+      backgroundColor: "transparent",
+      fill: false,
+      tension: 0.3,
+      yAxisID: "yPrice",
+      pointRadius: props.data.length > 80 ? 0 : 2,
+      borderWidth: 2,
+      borderDash: [3, 2],
+      order: 3,
+    },
   ],
 }));
 
@@ -380,8 +395,12 @@ const roomOptions = computed(() => ({
     },
     tooltip: {
       callbacks: {
-        label: (ctx) =>
-          ` ${ctx.dataset.label}: ${new Intl.NumberFormat("vi-VN").format(ctx.raw)} CP`,
+        label: (ctx) => {
+          if (ctx.dataset.yAxisID === "yPrice") {
+            return ` ${ctx.dataset.label}: ${new Intl.NumberFormat("vi-VN").format(ctx.raw)} ₫`;
+          }
+          return ` ${ctx.dataset.label}: ${new Intl.NumberFormat("vi-VN").format(ctx.raw)} CP`;
+        },
       },
     },
   },
@@ -406,6 +425,15 @@ const roomOptions = computed(() => ({
       },
       grid: { display: false },
       ticks: { callback: fmtAxis },
+    },
+    yPrice: {
+      type: "linear",
+      position: "right",
+      title: { display: true, text: "Giá đóng cửa (₫)", font: { size: 11 } },
+      grid: { display: false },
+      ticks: {
+        callback: (v) => new Intl.NumberFormat("vi-VN").format(v),
+      },
     },
   },
 }));
