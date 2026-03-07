@@ -1,14 +1,14 @@
 <template>
-  <div class="app-wrapper">
+  <div class="page-wrap">
     <!-- Header -->
-    <header class="app-header">
+    <header class="page-header">
       <div class="header-inner">
         <div class="flex items-center gap-3">
           <div class="header-icon">
             <i class="pi pi-chart-line"></i>
           </div>
           <div>
-            <h1 class="header-title">Thống Kê Chứng Khoán</h1>
+            <h1 class="header-title">Thống Kê Lịch Sử</h1>
             <p class="header-sub">
               Phân tích dữ liệu giao dịch cổ phiếu Việt Nam
             </p>
@@ -17,7 +17,6 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
       <div class="search-sticky">
         <SearchForm @search="handleSearch" :loading="loading" />
@@ -39,7 +38,6 @@
       </div>
 
       <template v-if="stockData.length > 0 && !loading">
-        <!-- Symbol header -->
         <div class="symbol-header mb-5">
           <div class="flex items-center gap-4">
             <div class="symbol-badge">{{ currentSymbol }}</div>
@@ -83,13 +81,13 @@
 import { ref } from "vue";
 import Message from "primevue/message";
 import ProgressSpinner from "primevue/progressspinner";
-import SearchForm from "./components/SearchForm.vue";
-import StatsOverview from "./components/StatsOverview.vue";
-import PriceVolumeChart from "./components/PriceVolumeChart.vue";
-import ForeignSection from "./components/ForeignSection.vue";
-import PropForeignComparison from "./components/PropForeignComparison.vue";
-import StockDataTable from "./components/StockDataTable.vue";
-import { fetchHistoricalQuotes } from "./services/stockApi.js";
+import SearchForm from "../components/SearchForm.vue";
+import StatsOverview from "../components/StatsOverview.vue";
+import PriceVolumeChart from "../components/PriceVolumeChart.vue";
+import ForeignSection from "../components/ForeignSection.vue";
+import PropForeignComparison from "../components/PropForeignComparison.vue";
+import StockDataTable from "../components/StockDataTable.vue";
+import { fetchHistoricalQuotes } from "../services/stockApi.js";
 
 const stockData = ref([]);
 const loading = ref(false);
@@ -135,11 +133,11 @@ const formatDate = (dateStr) => {
 </script>
 
 <style scoped>
-.app-wrapper {
+.page-wrap {
   min-height: 100vh;
 }
 
-.app-header {
+.page-header {
   background: linear-gradient(135deg, #0f3460 0%, #1a4080 50%, #0f3460 100%);
   color: white;
   padding: 1.25rem 2rem;
@@ -149,6 +147,9 @@ const formatDate = (dateStr) => {
 .header-inner {
   max-width: 1400px;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .header-icon {
@@ -160,12 +161,12 @@ const formatDate = (dateStr) => {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .header-title {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  letter-spacing: -0.3px;
 }
 
 .header-sub {
@@ -250,8 +251,25 @@ const formatDate = (dateStr) => {
   font-weight: 600;
 }
 
-.empty-state p,
-.initial-state p {
-  font-size: 0.9rem;
+.flex {
+  display: flex;
+}
+.items-center {
+  align-items: center;
+}
+.gap-3 {
+  gap: 0.75rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+.mr-1 {
+  margin-right: 0.25rem;
 }
 </style>
