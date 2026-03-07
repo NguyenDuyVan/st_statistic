@@ -49,7 +49,8 @@
         </h2>
 
         <p class="field-hint" style="margin-bottom: 0.75rem">
-          Bot Token và Chat ID được cấu hình qua file <code>.env</code> trên server.
+          Bot Token và Chat ID được cấu hình qua file <code>.env</code> trên
+          server.
         </p>
 
         <button class="btn btn-sm btn-primary" @click="testTelegram">

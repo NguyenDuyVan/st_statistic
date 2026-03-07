@@ -44,7 +44,9 @@ export class TelegramService {
 
   async sendTestMessage(): Promise<void> {
     if (!this.botToken || !this.chatId) {
-      throw new Error("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not configured in .env");
+      throw new Error(
+        "TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not configured in .env",
+      );
     }
     await axios.post(
       `https://api.telegram.org/bot${this.botToken}/sendMessage`,
